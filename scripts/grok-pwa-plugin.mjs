@@ -114,7 +114,7 @@ function wrapHtmlResponses(middlewares, cwd) {
       const encoded = Boolean(res.getHeader("content-encoding"));
       mode = isHtml && !encoded ? "inject" : "passthrough";
       // Streaming SSR flushes headers before the first body chunk, so the
-      // header may no longer be removable \u2014 chunked responses don't carry one.
+      // header may no longer be removable — chunked responses don't carry one.
       if (mode === "inject" && !res.headersSent) res.removeHeader("content-length");
       return mode;
     };
@@ -159,11 +159,11 @@ export function grokPwaPlugin() {
       root = config.root;
     },
     resolveId(id) {
-      if (id === GROK_OG_IDENTITY_ID) return `\\0${GROK_OG_IDENTITY_ID}`;
+      if (id === GROK_OG_IDENTITY_ID) return `\0${GROK_OG_IDENTITY_ID}`;
     },
     load(id) {
-      if (id !== `\\0${GROK_OG_IDENTITY_ID}`) return;
-      return `export const grokOgIdentity = ${JSON.stringify(snapshotOgIdentity(root))}`;
+      if (id !== `\0${GROK_OG_IDENTITY_ID}`) return;
+      return `export const grokOgIdentity = ${JSON.stringify(snapshotOgIdentity(root))};`;
     },
     transformIndexHtml(html) {
       return injectGrokPwaHead(html, {
