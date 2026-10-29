@@ -1,0 +1,42 @@
+name: Deploy
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Skip until AWS is connected
+        id: gate
+        env:
+          ROLE: ${{ secrets.AWS_ROLE_ARN }}
+        run: |
+          if [ -z "$ROLE" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "AWS_ROLE_ARN is not set. Finish the AWS steps in SETUP.md, then run this workflow again."
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: aws-actions/configure-aws-credentials@v4
+        if: steps.gate.outputs.ready == 'true'
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+      - uses: aws-actions/amazon-ecr-login@v2
+        if: steps.gate.outputs.ready == 'true'
+        id: login
+      - name: Build and push the image
+        if: steps.gate.outputs.ready == 'true'
+        env:
+          REGISTRY: ${{ steps.login.outputs.registry }}
+          REPOSITORY: nimbus-onboard
+        run: |
+          IMAGE="$REGISTRY/$REPOSITORY"
+          docker build -t "$IMAGE:latest" -t "$IMAGE:${{ github.sha }}" .
+          docker push "$IMAGE:latest"
+          docker push "$IMAGE:${{ github.sha }}"
