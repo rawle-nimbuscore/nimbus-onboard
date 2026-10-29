@@ -37,9 +37,9 @@
         var iosMajor = null;
         var osToken = null;
         var safariToken = null;
-        var iphoneOs = ua.match(/iPhone OS (\\d+)[._]/);
-        var ipadOs = ua.match(/CPU OS (\\d+)[._](\\d+) like Mac OS X/);
-        var safariVer = ua.match(/Version\\/(\\d+)[._]/);
+        var iphoneOs = ua.match(/iPhone OS (\d+)[._]/);
+        var ipadOs = ua.match(/CPU OS (\d+)[._](\d+) like Mac OS X/);
+        var safariVer = ua.match(/Version\/(\d+)[._]/);
         if (iphoneOs) osToken = parseInt(iphoneOs[1], 10);
         else if (ipadOs) osToken = parseInt(ipadOs[1], 10);
         if (isIOS && safariVer) safariToken = parseInt(safariVer[1], 10);

@@ -2,7 +2,7 @@
 /**
  * Deploy-time database migrator (node-postgres, `pg`).
  *
- * Runs during `npm run build` \u2014 on every Vercel deploy \u2014 applying pending files
+ * Runs during `npm run build` — on every Vercel deploy — applying pending files
  * in ../migrations to DATABASE_URL. Each file is applied in one transaction and
  * recorded in a `_migrations` table, so it runs once and is safe to re-run.
  *
@@ -21,7 +21,7 @@ import { pendingMigrations } from "./migration-plan.mjs";
 const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
   console.log(
-    "[migrate] DATABASE_URL not set \u2014 skipping (the PGLite fallback migrates itself).",
+    "[migrate] DATABASE_URL not set — skipping (the PGLite fallback migrates itself).",
   );
   process.exit(0);
 }
@@ -33,12 +33,12 @@ async function main() {
   try {
     entries = await readdir(migrationsDir);
   } catch {
-    console.log("[migrate] no migrations/ directory \u2014 nothing to do.");
+    console.log("[migrate] no migrations/ directory — nothing to do.");
     return;
   }
   // An app with no schema of its own must not pay for a database connection.
   if (pendingMigrations(entries, []).length === 0) {
-    console.log("[migrate] no migrations \u2014 nothing to do.");
+    console.log("[migrate] no migrations — nothing to do.");
     return;
   }
 
@@ -66,14 +66,14 @@ async function main() {
         try {
           await client.query("ROLLBACK");
         } catch {
-          // ROLLBACK fails when the connection died \u2014 keep the original error.
+          // ROLLBACK fails when the connection died — keep the original error.
         }
         throw err;
       }
       console.log(`[migrate] applied ${name}`);
       count += 1;
     }
-    console.log(count ? `[migrate] done \u2014 ${count} migration(s) applied.` : "[migrate] up to date.");
+    console.log(count ? `[migrate] done — ${count} migration(s) applied.` : "[migrate] up to date.");
   } finally {
     client.release();
     await pool.end();

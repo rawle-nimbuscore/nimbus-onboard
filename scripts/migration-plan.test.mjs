@@ -66,11 +66,11 @@ test("this workspace's auth schema copy is byte-identical to its source", () => 
   // An edited copy diverges silently: basename keying skips it on a database
   // that already ran the original, and applies it on a fresh PGLite preview.
   const pair = authSchemaCopy(projectRoot());
-  if (pair === null) return; // sign-in off \u2014 nothing has been copied up
+  if (pair === null) return; // sign-in off — nothing has been copied up
   assert.equal(
     pair.copy,
     pair.source,
-    "migrations/0001_auth.sql has been edited \u2014 it must stay a verbatim copy of migrations/auth/0001_auth.sql",
+    "migrations/0001_auth.sql has been edited — it must stay a verbatim copy of migrations/auth/0001_auth.sql",
   );
 });
 
