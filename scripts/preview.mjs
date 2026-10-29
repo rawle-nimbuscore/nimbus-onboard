@@ -45,7 +45,7 @@ export function parsePreviewArgs(argv) {
 
 export function parsePid(text) {
   const pid = Number.parseInt(String(text ?? "").trim(), 10);
-  // pid 1 is the sandbox init \u2014 never the preview, and dangerous to signal.
+  // pid 1 is the sandbox init — never the preview, and dangerous to signal.
   return Number.isInteger(pid) && pid > 1 ? pid : null;
 }
 
@@ -92,7 +92,7 @@ export function looksLikePreviewProcess(cmdline) {
 
 /**
  * Pids to signal. Port owners are owners by definition; the pidfile pid is only
- * a claim left by an earlier run \u2014 pids are re-used across hibernate/revive, so
+ * a claim left by an earlier run — pids are re-used across hibernate/revive, so
  * signal it only when its command line still looks like the preview.
  */
 export function previewOwners({ portPids, pidFilePid, cmdlineOf }) {
@@ -118,7 +118,7 @@ async function waitForExit(pids, { isAlive, sleep, timeoutMs, pollMs }) {
 
 /**
  * SIGTERM every live pid, then SIGKILL whatever outlives the grace period.
- * Returns `{ signalled, killed, stubborn }` \u2014 `stubborn` is still alive after
+ * Returns `{ signalled, killed, stubborn }` — `stubborn` is still alive after
  * the SIGKILL wait, which means the port is not reliably free.
  */
 export async function terminatePids(
@@ -151,7 +151,7 @@ export function stopOutcome({ signalled, stubborn, after }) {
   }
   const message =
     signalled.length > 0
-      ? `stopped pid(s) ${signalled.join(", ")} \u2014 port ${PREVIEW_PORT} is free`
+      ? `stopped pid(s) ${signalled.join(", ")} — port ${PREVIEW_PORT} is free`
       : `nothing was listening on ${PREVIEW_PORT}`;
   return { ok: true, message };
 }
@@ -198,7 +198,7 @@ function cmdlineOf(pid) {
   try {
     return readFileSync(`/proc/${pid}/cmdline`, "utf8");
   } catch {
-    // Usually a dead pid \u2014 the stale pidfile this corroboration exists for.
+    // Usually a dead pid — the stale pidfile this corroboration exists for.
     return "";
   }
 }
@@ -239,7 +239,7 @@ function pidsForSocketInodes(inodes) {
 }
 
 /**
- * `{ pids, unattributed }` \u2014 `unattributed: true` when the port has a listener
+ * `{ pids, unattributed }` — `unattributed: true` when the port has a listener
  * whose owning pid could not be resolved (an fd dir we may not read).
  */
 function portOwners() {
@@ -317,9 +317,9 @@ async function restart() {
     const secs = Math.round(READY_TIMEOUT_MS / 1000);
     const why =
       failure ??
-      `nothing answered on ${PREVIEW_URL} within ${secs}s \u2014 check that vite.config.ts ` +
+      `nothing answered on ${PREVIEW_URL} within ${secs}s — check that vite.config.ts ` +
         `still sets preview.port ${PREVIEW_PORT}`;
-    console.error(`[preview] ${why} \u2014 see ${LOG_FILE}`);
+    console.error(`[preview] ${why} — see ${LOG_FILE}`);
     // A server that binds a few seconds later would serve a build the agent has
     // already been told to distrust.
     await stop(false);
@@ -336,7 +336,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     process.exit(1);
   }
   if (!existsSync("/proc/self")) {
-    console.error("[preview] no /proc \u2014 this script only runs inside the sandbox");
+    console.error("[preview] no /proc — this script only runs inside the sandbox");
     process.exit(1);
   }
   process.exitCode = args.action === "stop" ? ((await stop()) ? 0 : 1) : await restart();
