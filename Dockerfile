@@ -1,7 +1,7 @@
 FROM node:22-bookworm-slim
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json ./
+RUN npm install
 COPY . .
 ENV ONBOARD_BASE=/onboard
 RUN npm run build
